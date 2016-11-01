@@ -14,6 +14,8 @@ import sys
 
 def main():
 
+    global basic_dir
+
     for dirpath, dirnames, filenames in os.walk(os.path.abspath('.')):
 
         for filename in filenames:
@@ -23,6 +25,7 @@ def main():
                 if os.path.splitext(filename)[0] in dirnames:
                     original_dir = os.path.join(os.path.abspath('.'), os.path.splitext(filename)[0] + '_CLEANED')
                     extracted_dir = os.path.join(os.path.abspath('.'), os.path.splitext(filename)[0] + '_EXTRACTED')
+                    basic_dir = os.path.join(os.path.join(os.path.abspath('.'), os.path.splitext(filename)[0]), '10-K')
 
                     if os.path.isdir(extracted_dir):
                         shutil.rmtree(extracted_dir)
@@ -87,22 +90,25 @@ def extract_txt_file(original_dir, extracted_dir, f):
 
         if item_check != -1:
 
-            if content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lower() in ('item1business\n', 'itemibusiness\n', 'item1descriptionofbusiness\n', 'item1descriptionofthebusiness\n', 'item1businessoverview\n', 'item1overviewofthebusiness\n', 'item1and2businessandproperties\n', 'item1and2businessandproperty\n', 'item1anditem2businessandproperties\n', 'item1anditem2businessandproperty\n', 'items1and2businessandproperties\n', 'items1and2businessandproperty\n', 'items1&2businessandproperties\n', 'items1&2businessandproperty\n', 'partiitem1business\n'):
+            if content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower() in ('item1business\n', 'itemibusiness\n', 'item1descriptionofbusiness\n', 'item1descriptionofthebusiness\n', 'item1businessoverview\n', 'item1overviewofthebusiness\n', 'item1and2businessandproperties\n', 'item1and2businessandproperty\n', 'item1anditem2businessandproperties\n', 'item1anditem2businessandproperty\n', 'items1and2businessandproperties\n', 'items1and2businessandproperty\n', 'items1&2businessandproperties\n', 'items1&2businessandproperty\n', 'partiitem1business\n'):
                 temp_line_first = content_line
                 content_line = text_content.readline()
 
                 # Skip catalog
-                if content_line.lower().replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').rstrip('\n').replace('i', '').replace('[', '').replace(']', '').replace('page', '').replace(',', '').isdigit():
+                if content_line.lower().replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').rstrip('\n').replace('i', '').replace('[', '').replace(']', '').replace('page', '').replace('*', '').replace('(', '').replace(')', '').isdigit():
                     content_line = text_content.readline()
 
-                elif content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lower() in ('item1a\n', 'item2\n', 'item\n', 'item3\n', 'item1ariskfactors\n', 'item2properties\n', 'item2property\n', 'item2descriptionofproperties\n', 'item2descriptionofproperty\n', 'item3legalproceedings\n', 'partiitem1ariskfactors\n', 'partiitem1bunresolvedstaffcomments\n', 'partiitem2property\n', 'partiitem2properties\n'):
+                elif content_line.lower().replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').rstrip('\n').replace('i', '').replace('[', '').replace(']', '').replace('page', '').replace('*', '').replace('(', '').replace(')', '').isalpha() and len(content_line.lower().replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').rstrip('\n').replace('i', '').replace('[', '').replace(']', '').replace('page', '').replace('*', '').replace('(', '').replace(')', '')) == 1:
                     content_line = text_content.readline()
 
-                elif content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lower() in ('\n', ):
+                elif content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower() in ('item1a\n', 'item1b\n', 'item2\n', 'item\n', 'item3\n', 'item1ariskfactors\n', 'itemiariskfactors\n', 'item1bunresolvedstaffcomments\n', 'item2properties\n', 'item2property\n', 'item2descriptionofproperties\n', 'item2descriptionofproperty\n', 'item3legalproceedings\n', 'partiitem1ariskfactors\n', 'partiitem1bunresolvedstaffcomments\n', 'partiitem2property\n', 'partiitem2properties\n'):
+                    content_line = text_content.readline()
+
+                elif content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower() in ('\n', ):
                     temp_line_second = content_line
                     content_line =text_content.readline()
 
-                    if content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lower() in ('item1ariskfactors\n', 'item1bunresolvedstaffcomments\n', 'item2properties\n', 'item2property\n', 'item2descriptionofproperties\n', 'item2descriptionofproperty\n', 'item3legalproceedings\n', 'partiitem1ariskfactors\n', 'partiitem1bunresolvedstaffcomments\n', 'partiitem2property\n', 'partiitem2properties\n'):
+                    if content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower() in ('item1ariskfactors\n', 'item1bunresolvedstaffcomments\n', 'item2properties\n', 'item2property\n', 'item2descriptionofproperties\n', 'item2descriptionofproperty\n', 'item3legalproceedings\n', 'partiitem1ariskfactors\n', 'partiitem1bunresolvedstaffcomments\n', 'partiitem2property\n', 'partiitem2properties\n'):
                         content_line = text_content.readline()
 
                     else:
@@ -111,7 +117,8 @@ def extract_txt_file(original_dir, extracted_dir, f):
                         temp_file.write(content_line)
                         content_line = text_content.readline()
 
-                        find_stop_character(content_line, text_content, temp_file)
+                        find_stop_character(original_dir, extracted_dir, f, content_line, text_content, temp_file)
+                        stop_signal = True
                         break
 
                 else:
@@ -119,66 +126,92 @@ def extract_txt_file(original_dir, extracted_dir, f):
                     temp_file.write(content_line)
                     content_line = text_content.readline()
 
-                    find_stop_character(content_line, text_content, temp_file)
+                    find_stop_character(original_dir, extracted_dir, f, content_line, text_content, temp_file)
+                    stop_signal = True
                     break
 
-            elif content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lower() in ('item1\n', 'item\n', 'itemi\n', 'item1and2\n', 'items1and2\n'):
+            elif content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower() in ('item1\n', 'item\n', 'itemi\n', 'item1and2\n', 'items1and2\n'):
                 temp_line_first = content_line
                 content_line = text_content.readline()
 
-                if content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lower() in ('business\n', 'descriptionofbusiness\n', 'descriptionofthebusiness\n', 'businessoverview\n', '1business\n', '1businessoverview\n', '1descriptionofbusiness\n', '1descriptionofthebusiness\n', '1and2businessandproperties\n', '1and2businessandproperty\n', 'businessandproperties\n', 'businessandproperty\n'):
+                if content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower() in ('business\n', 'descriptionofbusiness\n', 'descriptionofthebusiness\n', 'businessoverview\n', '1business\n', '1businessoverview\n', '1descriptionofbusiness\n', '1descriptionofthebusiness\n', '1and2businessandproperties\n', '1and2businessandproperty\n', 'businessandproperties\n', 'businessandproperty\n'):
                     temp_line_second = content_line
                     content_line = text_content.readline()
 
                     # Skip catalog
-                    if content_line.lower().replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').rstrip('\n').replace('i', '').replace('[', '').replace(']', '').replace('page', '').replace(',', '').isdigit():
+                    if content_line.lower().replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').rstrip('\n').replace('i', '').replace('[', '').replace(']', '').replace('page', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').isdigit():
                         content_line = text_content.readline()
 
-                    elif content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lower() in ('item1a\n', 'item2\n', 'item\n', 'item3\n', 'item1ariskfactors\n', 'item2properties\n', 'item2property\n', 'item2descriptionofproperties\n', 'item2descriptionofproperty\n', 'item3legalproceedings\n'):
+                    elif content_line.lower().replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').rstrip('\n').replace('i', '').replace('[', '').replace(']', '').replace('page', '').replace('*', '').replace('(', '').replace(')', '').isalpha() and len(content_line.lower().replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').rstrip('\n').replace('i', '').replace('[', '').replace(']', '').replace('page', '').replace('*', '').replace('(', '').replace(')', '')) == 1:
                         content_line = text_content.readline()
+
+                    elif content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower() in ('item1a\n', 'item1b\n', 'item2\n', 'item\n', 'item3\n', 'item1ariskfactors\n', 'item1arisk\n', 'item1bunresolvedstaffcomments\n', 'item1bunresolved\n', 'item2properties\n', 'item2property\n', 'item2descriptionofproperties\n', 'item2descriptionofproperty\n', 'item3legalproceedings\n'):
+                        content_line = text_content.readline()
+
+                    elif content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower() in ('\n',):
+                        temp_line_second = content_line
+                        content_line = text_content.readline()
+
+                        if content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower() in ('item\n', 'item1a\n', 'item1b\n', 'item2\n', 'item1arisk\n', 'item1ariskfactors\n', 'item1bunresolved\n', 'item1bunresolvedstaffcomments\n', 'item2properties\n', 'item2property\n', 'item2descriptionofproperties\n', 'item2descriptionofproperty\n', 'item3legalproceedings\n', 'partiitem1ariskfactors\n', 'partiitem1bunresolvedstaffcomments\n', 'partiitem2property\n', 'partiitem2properties\n'):
+                            content_line = text_content.readline()
+
+                        else:
+                            temp_file.write(temp_line_first.rstrip('\n') + temp_line_second)
+                            temp_file.write(content_line)
+                            content_line = text_content.readline()
+
+                            find_stop_character(original_dir, extracted_dir, f, content_line, text_content, temp_file)
+                            stop_signal = True
+                            break
 
                     else:
-                        temp_file.write(temp_line_first)
-                        temp_file.write(temp_line_second)
+                        temp_file.write(temp_line_first.rstrip('\n') + temp_line_second)
                         temp_file.write(content_line)
                         content_line = text_content.readline()
 
-                        find_stop_character(content_line, text_content, temp_file)
+                        find_stop_character(original_dir, extracted_dir, f, content_line, text_content, temp_file)
+                        stop_signal = True
                         break
 
-                elif content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lower() in ('1\n'):
+                elif content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower() in ('1\n'):
                     temp_line_second = content_line
                     content_line = text_content.readline()
 
-                    if content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lower() in ('business\n', 'descriptionofbusiness\n'):
+                    if content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower() in ('business\n', 'descriptionofbusiness\n'):
                         temp_line_third = content_line
                         content_line = text_content.readline()
 
-                        if not content_line.lower().replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').rstrip('\n').replace('i', '').replace('[', '').replace(']', '').replace('page', '').replace(',', '').isdigit():
-                            if not content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lower() in ('item1a\n', 'item2\n', 'item\n', 'item3\n', 'item1ariskfactors\n', 'item2properties\n', 'item2property\n', 'item2descriptionofproperties\n', 'item2descriptionofproperty\n', 'item3legalproceedings\n'):
-                                temp_file.write(temp_line_first)
-                                temp_file.write(temp_line_second)
-                                temp_file.write(temp_line_third)
+                        if not content_line.lower().replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').rstrip('\n').replace('i', '').replace('[', '').replace(']', '').replace('page', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').isdigit() and not (content_line.lower().replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').rstrip('\n').replace('i', '').replace('[', '').replace(']', '').replace('page', '').replace('*', '').replace('(', '').replace(')', '').isalpha() and len(content_line.lower().replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').rstrip('\n').replace('i', '').replace('[', '').replace(']', '').replace('page', '').replace('*', '').replace('(', '').replace(')', '')) == 1):
+                            if not content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower() in ('item1a\n', 'item1b\n', 'item2\n', 'item\n', 'item3\n', 'item1ariskfactors\n', 'item1bunresolvedstaffcomments\n', 'item2properties\n', 'item2property\n', 'item2descriptionofproperties\n', 'item2descriptionofproperty\n', 'item3legalproceedings\n'):
+                                temp_file.write(temp_line_first.rstrip('\n') + temp_line_second.rstrip('\n') + temp_line_third)
                                 temp_file.write(content_line)
                                 content_line = text_content.readline()
 
-                                find_stop_character(content_line, text_content, temp_file)
+                                find_stop_character(original_dir, extracted_dir, f, content_line, text_content, temp_file)
+                                stop_signal = True
                                 break
+
+                            else:
+                                content_line = text_content.readline()
 
                         else:
                             content_line = text_content.readline()
+
+                    else:
+                        content_line = text_content.readline()
 
                 else:
                     target = ['business  ', 'descriptionofbusiness  ', 'description of business  ', '1business  ', '1 business  ', '1businessoverview  ', '1 businessoverview  ', '1descriptionofbusiness  ', '1 descriptionofbusiness  ', '1 description of business  ', 'businessandproperties  ', 'business and properties  ', 'businessandproperty  ', 'business and property  ']
                     count = 0;
 
                     for i in target:
-                        if content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lstrip().lower().startswith(i):
-                            temp_file.write(temp_line_first)
-                            temp_file.write(content_line)
+                        if content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lstrip().lower().startswith(i):
+                            temp_file.write(temp_line_first.rstrip('\n') + content_line[0:len(i)] + '\n')
+                            temp_file.write(content_line[len(i):])
                             content_line = text_content.readline()
 
-                            find_stop_character(content_line, text_content, temp_file)
+                            find_stop_character(original_dir, extracted_dir, f, content_line, text_content, temp_file)
+                            stop_signal = True
                             break
 
                         else:
@@ -186,17 +219,6 @@ def extract_txt_file(original_dir, extracted_dir, f):
 
                             if count == len(target):
                                 content_line =text_content.readline()
-
-            # Skip catalog
-            elif content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lower().startswith('item1business'):
-                if content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lower().lstrip('item1business').rstrip('\n').isdigit():
-                    content_line = text_content.readline()
-                else:
-                    temp_file.write(content_line)
-                    content_line = text_content.readline()
-
-                    find_stop_character(content_line, text_content, temp_file)
-                    break
 
             else:
                 start_target = ['item 1 business  ', 'item1business  ', 'item1 business  ', 'item 1business  ', 'item 1  business  ', 'item1  business  ', 'item  1business  ', 'item 1 description of business  ', 'item1description of business  ', 'item1 description of business  ', 'item 1description of business  ', 'item 1  description of business  ', 'item1  description of business  ', 'item  1description of business  ', 'item1descriptionofbusiness  ', 'items 1 and 2 business and properties  ', 'items 1 & 2 business and properties  ']
@@ -206,12 +228,13 @@ def extract_txt_file(original_dir, extracted_dir, f):
                 count = 0
 
                 for k in middle_target:
-                    start_index = content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lower().find(k)
+                    start_index = content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower().find(k)
                     if start_index != -1:
-                        temp_file.write(content_line[start_index:])
+                        temp_file.write('Item 1 Business\n')
+                        temp_file.write(content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '')[start_index + len(k):])
                         content_line = text_content.readline()
 
-                        find_stop_character(content_line, text_content, temp_file)
+                        find_stop_character(original_dir, extracted_dir, f, content_line, text_content, temp_file)
                         stop_signal = True
                         break
 
@@ -221,13 +244,17 @@ def extract_txt_file(original_dir, extracted_dir, f):
                             count =0
 
                             for i in start_target:
-                                if content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lstrip().lower().startswith(i):
-                                    temp_file.write(content_line)
-                                    content_line = text_content.readline()
+                                if content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lstrip().lower().startswith(i):
+                                    if content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lstrip().lower().replace(i, '').replace(' ', '').rstrip('\n').isdigit() or (content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lstrip().lower().replace(i, '').replace(' ', '').rstrip('\n').isalpha() and len(content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lstrip().lower().replace(i, '').replace(' ', '').rstrip('\n')) == 1):
+                                        content_line = text_content.readline()
+                                    else:
+                                        temp_file.write('Item 1 Business\n')
+                                        temp_file.write(content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lstrip()[len(i):])
+                                        content_line = text_content.readline()
 
-                                    find_stop_character(content_line, text_content, temp_file)
-                                    stop_signal = True
-                                    break
+                                        find_stop_character(original_dir, extracted_dir, f, content_line, text_content, temp_file)
+                                        stop_signal = True
+                                        break
 
                                 else:
                                     count += 1
@@ -235,11 +262,11 @@ def extract_txt_file(original_dir, extracted_dir, f):
                                         count = 0
 
                                         for h in end_target:
-                                            if content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lower().endswith(h):
-                                                temp_file.write(content_line[content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lower().find(h):])
+                                            if content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower().endswith(h):
+                                                temp_file.write('Item 1 Business\n')
                                                 content_line = text_content.readline()
 
-                                                find_stop_character(content_line, text_content, temp_file)
+                                                find_stop_character(original_dir, extracted_dir, f, content_line, text_content, temp_file)
                                                 stop_signal = True
                                                 break
 
@@ -249,16 +276,15 @@ def extract_txt_file(original_dir, extracted_dir, f):
                                                     count = 0
 
                                                     for j in half_end_target:
-                                                        if content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lower().endswith(j):
-                                                            temp_line = content_line[content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lower().find(j):]
+                                                        if content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower().endswith(j):
                                                             content_line = text_content.readline()
 
-                                                            if content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lstrip().lower().startswith('business  '):
-                                                                temp_file.write(temp_line)
-                                                                temp_file.write(content_line)
+                                                            if content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lstrip().lower().startswith('business  '):
+                                                                temp_file.write('Item 1 Business\n')
+                                                                temp_file.write(content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lstrip()[10:])
                                                                 content_line = text_content.readline()
 
-                                                                find_stop_character(content_line, text_content, temp_file)
+                                                                find_stop_character(original_dir, extracted_dir, f, content_line, text_content, temp_file)
                                                                 stop_signal = True
                                                                 break
 
@@ -284,10 +310,15 @@ def extract_txt_file(original_dir, extracted_dir, f):
     temp_lines =temp_content.readlines()
 
     if len(temp_lines) == 5:
+        shutil.copy(os.path.join(extracted_dir, f), os.path.join(extracted_dir, 'Manual_Clean'))
         os.remove(os.path.join(extracted_dir, f))
-        shutil.copy(os.path.join(original_dir,f), os.path.join(extracted_dir, 'Manual_Clean'))
+        basic_files = os.listdir(basic_dir)
 
-def find_stop_character(content_line, text_content, temp_file):
+        for bf in basic_files:
+            if os.path.splitext(bf)[0] == os.path.splitext(f)[0]:
+                shutil.copy(os.path.join(basic_dir, bf), os.path.join(extracted_dir, 'Manual_Clean'))
+
+def find_stop_character(original_dir, extracted_dir, f, content_line, text_content, temp_file):
 
     while content_line != '':
 
@@ -297,26 +328,40 @@ def find_stop_character(content_line, text_content, temp_file):
 
         if item_check != -1:
 
-            if not content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lower() in ('item1bunresolvedstaffcomments\n', 'item2properties\n', 'item2property\n', 'item2descriptionofproperties\n', 'item2descriptionofproperty\n', 'item3legalproceedings\n', 'partiitem1bunresolvedstaffcomments\n', 'partiitem2property\n', 'partiitem2properties\n'):
+            if not content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower() in ('item1bunresolvedstaffcomments\n', 'item2properties\n', 'item2property\n', 'item2descriptionofproperties\n', 'item2descriptionofproperty\n', 'item3legalproceedings\n', 'partiitem1bunresolvedstaffcomments\n', 'partiitem2property\n', 'partiitem2properties\n'):
 
                 # Skip pagination
-                if content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').rstrip('\n').isdigit():
+                if content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').rstrip('\n').isdigit():
                     temp_file.write('\n')
                     content_line = text_content.readline()
 
-                elif content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lower() in ('item\n', 'item1b\n', 'item2\n', 'item3\n'):
+                elif content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower() in ('item\n', 'item1b\n', 'item1bunresolved\n', 'item2\n', 'item3\n'):
                     temp_line_first = content_line
                     content_line = text_content.readline()
 
-                    if content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lower() in ('1bunresolvedstaffcomments\n', 'unresolvedstaffcomments\n', '2properties\n', '2property\n', '2descriptionofproperties\n', '2descriptionofproperty\n', 'properties\n', 'property\n', 'descriptionofproperties\n', 'descriptionofproperty\n', 'facilities\n', 'legalproceedings\n', '3legalproceedings\n'):
+                    if content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower() in ('1bunresolvedstaffcomments\n', 'unresolvedstaffcomments\n', 'staffcomments\n', '2properties\n', '2property\n', '2descriptionofproperties\n', '2descriptionofproperty\n', 'properties\n', 'property\n', 'descriptionofproperties\n', 'descriptionofproperty\n', 'facilities\n', 'legalproceedings\n', '3legalproceedings\n'):
                         stop_signal = True
                         break
 
-                    elif content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lower() in ('2\n'):
+                    elif content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower() in ('1b\n', '1bunresolved\n', '1bunresolvedstaff\n', 'unresolved\n', '2\n'):
                         temp_line_second = content_line
                         content_line = text_content.readline()
 
-                        if content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lower() in ('properties\n', 'property\n', 'descriptionofproperties\n', 'descriptionofproperty\n'):
+                        if content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower() in ('unresolvedstaffcomments\n', 'unresolved\n', 'staffcomments\n', 'staff\n', 'comments\n', 'properties\n', 'property\n', 'descriptionofproperties\n', 'descriptionofproperty\n'):
+                            stop_signal = True
+                            break
+
+                        else:
+                            temp_file.write(temp_line_first)
+                            temp_file.write(temp_line_second)
+                            temp_file.write(content_line)
+                            content_line = text_content.readline()
+
+                    elif content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower() in ('\n',):
+                        temp_line_second = content_line
+                        content_line = text_content.readline()
+
+                        if content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower() in ('1bunresolvedstaffcomments\n', '2properties\n', '2property\n', '2descriptionofproperties\n', '2descriptionofproperty\n', '3legalproceedings\n', 'unresolvedstaffcomments\n', 'staffcomments\n', 'properties\n', 'property\n', 'descriptionofproperties\n', 'descriptionofproperty\n', 'legalproceedings\n'):
                             stop_signal = True
                             break
 
@@ -331,7 +376,7 @@ def find_stop_character(content_line, text_content, temp_file):
                         count = 0
 
                         for i in target:
-                            if content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lstrip().lower().startswith(i):
+                            if content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lstrip().lower().startswith(i):
                                 stop_signal = True
                                 break
 
@@ -345,14 +390,15 @@ def find_stop_character(content_line, text_content, temp_file):
 
                 else:
                     start_target = ['item 1b unresolved staff comments  ', 'item1bunresolved staff comments  ', 'item1b unresolved staff comments  ', 'item 1bunresolved staff comments  ', 'item 1b  unresolved staff comments  ', 'item1b  unresolved staff comments  ', 'item  1bunresolved staff comments  ', 'item 2 properties  ', 'item2properties  ', 'item2 properties  ', 'item 2properties  ', 'item 2  properties  ', 'item2  properties  ', 'item  2properties  ', 'item 2 property  ', 'item2property  ', 'item2 property  ', 'item 2property  ', 'item 2  property  ', 'item2  property  ', 'item  2property  ', 'item 2 description of properties  ', 'item2description of properties  ', 'item2 description of properties  ', 'item 2description of properties  ', 'item 2  description of properties  ', 'item2  description of properties  ', 'item  2description of properties  ', 'item 2 description of property  ', 'item2description of property  ', 'item2 description of property  ', 'item 2description of property  ', 'item 2  description of property  ', 'item2  description of property  ', 'item  2description of property  ', 'item 3 legal proceedings  ', 'item3legal proceedings  ', 'item3 legal proceedings  ', 'item 3legal proceedings  ', 'item 3  legal proceedings  ', 'item3  legal proceedings  ', 'item  3legal proceedings  ']
+                    half_end_target = ['  item1b\n', '  item 1b\n', 'item2\n', '  item 2\n']
                     end_target = ['  item 1b unresolved staff comments\n', '  item1bunresolved staff comments\n', '  item1b unresolved staff comments\n', '  item 1bunresolved staff comments\n', '  item 1b  unresolved staff comments\n', '  item1b  unresolved staff comments\n', '  item  1bunresolved staff comments\n', '  item 2 properties\n', '  item2properties\n', '  item2 properties\n', '  item 2properties\n', '  item 2  properties\n', '  item2  properties\n', '  item  2properties\n', '  item 2 property\n', '  item2property', '  item2 property\n', '  item 2property\n', '  item 2  property\n', '  item2  property\n', '  item  2property\n', '  item 2 description of properties\n', '  item2description of properties\n', '  item2 description of properties\n', '  item 2description of properties\n', '  item 2  description of properties\n', '  item2  description of properties\n', '  item  2description of properties\n', '  item 2 description of property\n', '  item2description of property\n', '  item2 description of property\n', '  item 2description of property\n', '  item 2  description of property\n', '  item2  description of property\n', '  item  2description of property\n', '  item 3 legal proceedings\n', '  item3legal proceedings\n', '  item3 legal proceedings\n', '  item 3legal proceedings\n', '  item 3  legal proceedings\n', '  item3  legal proceedings\n', '  item  3legal proceedings\n']
                     middle_target = ['  item 1b unresolved staff comments  ', '  item1bunresolved staff comments  ', '  item1b unresolved staff comments  ', '  item 1bunresolved staff comments  ', '  item 1b  unresolved staff comments  ', '  item1b  unresolved staff comments  ', '  item  1bunresolved staff comments  ', '  item 2 properties  ', '  item2properties  ', '  item2 properties  ', '  item 2properties  ', '  item 2  properties  ', '  item2  properties  ', '  item  2properties  ', '  item 2 property  ', '  item2property  ', '  item2 property  ', '  item 2property  ', '  item 2  property  ', '  item2  property  ', '  item  2property  ', '  item 2 description of properties  ', '  item2description of properties  ', '  item2 description of properties  ', '  item 2description of properties  ', '  item 2  description of properties  ', '  item2  description of properties  ', '  item  2description of properties  ', '  item 2 description of property  ', '  item2description of property  ', '  item2 description of property  ', '  item 2description of property  ', '  item 2  description of property  ', '  item2  description of property  ', '  item  2description of property  ', '  item 3 legal proceedings  ', '  item3legal proceedings  ', '  item3 legal proceedings  ', '  item 3legal proceedings  ', '  item 3  legal proceedings  ', '  item3  legal proceedings  ', '  item  3legal proceedings  ']
                     count = 0
 
                     for k in middle_target:
-                        end_index = content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lower().find(k)
+                        end_index = content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower().find(k)
                         if end_index != -1:
-                            temp_file.write(content_line[:end_index])
+                            temp_file.write(content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '')[:end_index])
                             stop_signal = True
                             break
 
@@ -362,7 +408,7 @@ def find_stop_character(content_line, text_content, temp_file):
                                 count = 0
 
                                 for i in start_target:
-                                    if content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lstrip().lower().startswith(i):
+                                    if content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lstrip().lower().startswith(i):
                                         stop_signal = True
                                         break
 
@@ -373,8 +419,8 @@ def find_stop_character(content_line, text_content, temp_file):
                                             count = 0
 
                                             for j in end_target:
-                                                if content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').lower().endswith(j):
-                                                    temp_file.write(content_line)
+                                                if content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower().endswith(j):
+                                                    temp_file.write(content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '')[:content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower().find(j)])
                                                     stop_signal = True
                                                     break
 
@@ -382,15 +428,42 @@ def find_stop_character(content_line, text_content, temp_file):
                                                     count += 1
 
                                                     if count == len(end_target):
-                                                        temp_file.write(content_line.replace('\xb7', '  ').replace('\x92', '\'').replace('\x93', '').replace('\x8f', '  ').replace('\x95', '  '))
-                                                        content_line = text_content.readline()
+                                                        count = 0
+
+                                                        for h in half_end_target:
+                                                            if content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower().endswith(h):
+                                                                temp_line_first = content_line
+                                                                temp_line_second = content_line.replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '')[:content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lower().find(h)]
+                                                                content_line = text_content.readline()
+
+                                                                if content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lstrip().lower().startswith('unresolved staff comments  '):
+                                                                    temp_file.write(temp_line_second)
+                                                                    stop_signal = True
+                                                                    break
+
+                                                                elif content_line.replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').lstrip().lower().startswith('properties  '):
+                                                                    temp_file.write(temp_line_second)
+                                                                    stop_signal = True
+                                                                    break
+
+                                                                else:
+                                                                    count += 1
+                                                                    if count == len(half_end_target):
+                                                                        temp_file.write(temp_line_first.replace('\xb7', '  ').replace('\x92', '\'').replace('\x93', '').replace('\x8f', '  ').replace('\x95', '  '))
+                                                                        temp_file.write(content_line.replace('\xb7', '  ').replace('\x92', '\'').replace('\x93', '').replace('\x8f', '  ').replace('\x95', '  '))
+                                                                        content_line = text_content.readline()
+                                                            else:
+                                                                count += 1
+                                                                if count == len(half_end_target):
+                                                                    temp_file.write(content_line.replace('\xb7', '  ').replace('\x92', '\'').replace('\x93', '').replace('\x8f', '  ').replace('\x95', '  '))
+                                                                    content_line = text_content.readline()
 
             else:
                 stop_signal = True
                 break
 
         else:
-            if content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').rstrip('\n').isdigit():
+            if content_line.replace(' ', '').replace('.', '').replace('-', '').replace(':', '').replace('\t', '').replace(',', '').replace('*', '').replace('(', '').replace(')', '').rstrip('\n').isdigit():
                 temp_file.write('\n')
                 content_line = text_content.readline()
             else:
